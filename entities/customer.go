@@ -2,12 +2,10 @@ package entities
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Customer struct {
-	ID            uuid.UUID `json:"id"`
+	ID            ID `json:"id"`
 	FiscalID      string    `json:"fiscal_id"`
 	CorporateName string    `json:"corporate_name"`
 	TradeName     string    `json:"trade_name"`
