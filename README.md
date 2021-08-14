@@ -5,7 +5,7 @@ Um sistema para gerenciamento de propostas comerciais
 
 ### Cadastrar um novo cliente de prospecção
 
-- CNPJ
+- CNPJ
 - Razão Social
 - Inscrição Estadual
 - Inscrição Municipal
@@ -33,6 +33,16 @@ Um sistema para gerenciamento de propostas comerciais
 - Preencher e-mail e senha para acesso ao questionário
 - Permitir preenchimento parcial e assíncrono
 - Dados do questionário:
+  - Valor faturamento anual
+  - Quantidade estimada de emissão de documentos por tipo de documento 
+    - Quantidade NF-e
+    - Quantidade NFS-e
+    - Quantidade CT-e
+    - Quantidade NFC-e
+  - NF-e
+    - Em quais estados a empresa emite NF-e
+  - NFS-e
+    - Em quais municípios a empresa emite NFS-e?
   - Idioma oficial do projeto
   - Quais sistemas emitirão nota?
     - SAP
@@ -49,28 +59,26 @@ Um sistema para gerenciamento de propostas comerciais
         - Controle extremo
         - Controle moderado
         - Autonomia total
+      - Nota fiscal standard SAP está implementada?
+        - Se sim
+          - BADI CL_NFE_PRINT já implementada?
+          - Layout de DANFE já desenvolvido?
+          - Possui alguma customização no processo de envio?
+      - Qual o tipo de comunicação deseja utilizar?
+        - Comunicação HTTP direto do SAP ECC ou S/4HANA
+        - CPI
+        - PI
+        - PO
+        - Outra?
+          - Informar
+        - Nível de autorizações / acessos na solução de comunicação?
+          - Nenhum
+          - Controle extremo
+          - Controle moderado
+          - Acesso Completo
     - Outro
       - Informar
-  - Valor faturamento anual
-  - Quantidade de NFs de saída por mês
-  - Quantidade de NFs de entrada por mês
-  - NF-e
-    - Em quais estados a empresa emite NF-e
-  - NFS-e
-    - Em quais municípios a empresa emite NFS-e?
-  - Qual o tipo de comunicação deseja utilizar?
-    - Comunicação HTTP direto do SAP ECC ou S/4HANA
-    - CPI
-    - PI
-    - PO
-    - Outra?
-      - Informar
-    - Nível de autorizações / acessos?
-        - Nenhum
-        - Controle extremo
-        - Controle moderado
-        - Completo
+
   - Existirá alguma integração do Orbit com outra aplicação?
-
-
+  
 \* Mapeado como ponto de melhoria futura!
