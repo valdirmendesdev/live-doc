@@ -1,13 +1,13 @@
-package db_test
+package models_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/valdirmendesdev/live-doc/internal/core/db"
+	"github.com/valdirmendesdev/live-doc/internal/core/models"
 	"testing"
 )
 
-func createNewCustomer(fiscalID string) *db.Customer {
-	user := db.NewCustomer()
+func createNewCustomer(fiscalID string) *models.Customer {
+	user := models.NewCustomer()
 	user.FiscalID = fiscalID
 	return user
 }
@@ -16,6 +16,8 @@ func Test_NewCustomer(t *testing.T) {
 	u := createNewCustomer("")
 	assert.NotNil(t, u)
 	assert.NotNil(t, u.ID)
+	assert.False(t, u.CreatedAt.IsZero())
+	assert.True(t, u.UpdatedAt.IsZero())
 }
 
 func Test_IsValid(t *testing.T) {

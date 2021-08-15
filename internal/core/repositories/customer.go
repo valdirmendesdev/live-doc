@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"github.com/valdirmendesdev/live-doc/internal/core/db"
+	"github.com/valdirmendesdev/live-doc/internal/core/models"
 )
 
 type UserRepository interface {
-	Create(e *db.Customer) (*db.Customer, error)
+	Store(e *models.Customer) (*models.Customer, error)
 }
