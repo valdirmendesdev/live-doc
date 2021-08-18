@@ -14,6 +14,7 @@ type Survey struct {
 	NFSeCitiesCovered    []string
 	MainProjectLanguage  string
 	ExternalIntegrations []string
+	IntegrationSystems   []*IntegrationSystem
 	CreatedAt            time.Time
 	UpdatedAt            time.Time
 }

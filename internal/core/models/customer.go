@@ -20,9 +20,11 @@ type Customer struct {
 	UpdatedAt     time.Time
 }
 
-func NewCustomer() *Customer {
+func NewCustomer(fiscalId string, corporateName string) *Customer {
 	return &Customer{
 		ID:        NewUUID(),
+		FiscalID: fiscalId,
+		CorporateName: corporateName,
 		CreatedAt: time.Now(),
 	}
 }
