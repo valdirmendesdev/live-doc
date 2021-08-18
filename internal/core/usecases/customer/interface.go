@@ -2,7 +2,7 @@ package customer
 
 import "github.com/valdirmendesdev/live-doc/internal/core/models"
 
-type CustomerDTO struct {
+type CreateDTO struct {
 	FiscalID      string
 	CorporateName string
 	TradeName     string
@@ -15,5 +15,5 @@ type CustomerDTO struct {
 }
 
 type UseCase interface {
-	CreateCustomer(customerData CustomerDTO) (*models.Customer, error)
+	CreateCustomer(customerData CreateDTO) (*models.Customer, error)
 }

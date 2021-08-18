@@ -36,7 +36,7 @@ func (m *MockUseCase) EXPECT() *MockUseCaseMockRecorder {
 }
 
 // CreateCustomer mocks base method.
-func (m *MockUseCase) CreateCustomer(customerData customer.CustomerDTO) (*models.Customer, error) {
+func (m *MockUseCase) CreateCustomer(customerData customer.CreateDTO) (*models.Customer, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCustomer", customerData)
 	ret0, _ := ret[0].(*models.Customer)
