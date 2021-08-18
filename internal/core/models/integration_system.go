@@ -1,10 +1,12 @@
 package models
 
-type Type string
+import "errors"
+
+type SystemType string
 
 const (
-	SAP   Type = "SAP"
-	Other Type = "Other"
+	SAP   SystemType = "SAP"
+	Other SystemType = "Other"
 )
 
 type AutonomyLevel string
@@ -19,7 +21,7 @@ const (
 type CommunicationType string
 
 const (
-	EccHttp  CommunicationType = "ECC_HTTP"
+	EccHttp  CommunicationType = "Http"
 	CPI      CommunicationType = "CPI"
 	PI       CommunicationType = "PI"
 	PO       CommunicationType = "PO"
@@ -27,8 +29,10 @@ const (
 )
 
 type IntegrationSystem struct {
-	Type                          Type
+	SystemType                    SystemType
 	Name                          string
+	CommunicationType             CommunicationType
+	CommunicationName             string
 	SAPVersion                    string
 	SapBasis                      string
 	SapAppl                       string
@@ -37,6 +41,35 @@ type IntegrationSystem struct {
 	HasSAPNfeImplementation       bool
 	NfeBadiImplemented            bool
 	DanfeLayoutImplemented        bool
-	CommunicationType             CommunicationType
-	CommunicationName             string
+}
+
+func NewIntegrationSystem(integrationType SystemType, communicationType CommunicationType) *IntegrationSystem {
+	return &IntegrationSystem{
+		SystemType:        integrationType,
+		CommunicationType: communicationType,
+	}
+}
+
+func (is *IntegrationSystem) IsValid() (bool, error) {
+	if is.SystemType == "" {
+		return false, errors.New("system type must be filled")
+	}
+
+	if is.SystemType != SAP && is.SystemType != Other {
+		return false, errors.New("system type is not valid")
+	}
+
+	if is.CommunicationType == "" {
+		return false, errors.New("communication type must be filled")
+	}
+
+	if is.CommunicationType != EccHttp &&
+		is.CommunicationType != CPI &&
+		is.CommunicationType != PI &&
+		is.CommunicationType != PO &&
+		is.CommunicationType != External  {
+		return false, errors.New("communication type is not valid")
+	}
+
+	return true, nil
 }
