@@ -4,6 +4,6 @@ import (
 	"github.com/valdirmendesdev/live-doc/internal/core/models"
 )
 
-type UserRepository interface {
-	Store(e *models.Customer) (*models.Customer, error)
+type Customer interface {
+	Create(e *models.Customer) (*models.Customer, error)
 }

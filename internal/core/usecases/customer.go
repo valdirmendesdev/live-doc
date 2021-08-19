@@ -1,4 +1,4 @@
-package customer
+package usecases
 
 import "github.com/valdirmendesdev/live-doc/internal/core/models"
 
@@ -16,4 +16,5 @@ type CreateDTO struct {
 
 type UseCase interface {
 	CreateCustomer(customerData CreateDTO) (*models.Customer, error)
+	GetAll()
 }
