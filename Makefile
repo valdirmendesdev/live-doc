@@ -8,4 +8,4 @@ test:
 build-mocks:
 	$(GO) get github.com/golang/mock/gomock
 	$(GO) install github.com/golang/mock/mockgen@v1.6.0
-	@~/go/bin/mockgen -source=internal/core/repositories/customer.go -destination=internal/core/repositories/mock/customer.go -package=mock
+	@~/go/bin/mockgen -source=internal/core/repositories/customer.go -destination=internal/core/repositories/mocks/customer.go -package=mocks
