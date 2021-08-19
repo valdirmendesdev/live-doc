@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func createIntegrationSystem() *models.IntegrationSystem {
+func createIntegrationSystem() models.IntegrationSystem {
 	return models.NewIntegrationSystem(models.SAP, models.EccHttp)
 }
 

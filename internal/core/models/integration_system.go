@@ -43,8 +43,8 @@ type IntegrationSystem struct {
 	DanfeLayoutImplemented        bool
 }
 
-func NewIntegrationSystem(integrationType SystemType, communicationType CommunicationType) *IntegrationSystem {
-	return &IntegrationSystem{
+func NewIntegrationSystem(integrationType SystemType, communicationType CommunicationType) IntegrationSystem {
+	return IntegrationSystem{
 		SystemType:        integrationType,
 		CommunicationType: communicationType,
 	}

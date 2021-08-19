@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func createNewCustomer() *models.Customer {
+func createNewCustomer() models.Customer {
 	user := models.NewCustomer("123456789", "test")
 	return user
 }
