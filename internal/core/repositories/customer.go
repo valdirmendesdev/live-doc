@@ -5,5 +5,6 @@ import (
 )
 
 type Customer interface {
-	Create(e *models.Customer) (*models.Customer, error)
+	Create(c *models.Customer) (*models.Customer, error)
+	List() ([]models.Customer, error)
 }
