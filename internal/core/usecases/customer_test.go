@@ -14,24 +14,22 @@ import (
 
 func createCustomerUseCaseWithMock(t *testing.T) (*gomock.Controller, *mocks.MockCustomer, *usecases.Customer) {
 	ctrl := gomock.NewController(t)
-	mock := mocks.NewMockCustomer(ctrl)
-	useCase := usecases.NewCustomer(mock)
-	return ctrl, mock, useCase
+	repoMock := mocks.NewMockCustomer(ctrl)
+	useCase := usecases.NewCustomer(repoMock)
+	return ctrl, repoMock, useCase
 }
 
 func Test_CustomerUseCaseInstance(t *testing.T) {
-	ctrl, _, useCase := createCustomerUseCaseWithMock(t)
-	defer ctrl.Finish()
+	_, _, usecase := createCustomerUseCaseWithMock(t)
 
-	require.NotNil(t, useCase)
-	require.NotNil(t, useCase.Repo)
+	require.NotNil(t, usecase)
+	require.NotNil(t, usecase.Repo)
 }
 
 func Test_SuccessCustomerCreate(t *testing.T) {
-	ctrl, mock, useCase := createCustomerUseCaseWithMock(t)
-	defer ctrl.Finish()
+	_, repoMock, usecase := createCustomerUseCaseWithMock(t)
 
-	mock.
+	repoMock.
 		EXPECT().
 		Create(gomock.Any()).
 		DoAndReturn(func(customer *models.Customer) (*models.Customer, error) {
@@ -51,7 +49,7 @@ func Test_SuccessCustomerCreate(t *testing.T) {
 		Complement:    "test",
 	}
 
-	customer, err := useCase.Create(dto)
+	customer, err := usecase.Create(dto)
 	require.NotNil(t, customer)
 	require.Nil(t, err)
 	require.Equal(t, dto.FiscalID, customer.FiscalID)
@@ -66,14 +64,13 @@ func Test_SuccessCustomerCreate(t *testing.T) {
 }
 
 func Test_RepositoryErrorCreateCustomer(t *testing.T) {
-	ctrl, mock, useCase := createCustomerUseCaseWithMock(t)
-	defer ctrl.Finish()
+	_, repoMock, usecase := createCustomerUseCaseWithMock(t)
 
-	mock.
+	repoMock.
 		EXPECT().
 		Create(gomock.Any()).
 		DoAndReturn(func(customer *models.Customer) (*models.Customer, error) {
-			return nil, errors.New("Error from repository")
+			return nil, errors.New("repository's error")
 		}).
 		Times(1)
 
@@ -81,17 +78,42 @@ func Test_RepositoryErrorCreateCustomer(t *testing.T) {
 		FiscalID:      "test",
 		CorporateName: "test",
 	}
-	customer, err := useCase.Create(dto)
+	customer, err := usecase.Create(dto)
 	require.Nil(t, customer)
 	require.NotNil(t, err)
 }
 
-func Test_InvalidCustomerCreateUseCase(t *testing.T) {
-	ctrl, _, useCase := createCustomerUseCaseWithMock(t)
-	defer ctrl.Finish()
+func Test_InvalidCustomerCreateCustomer(t *testing.T) {
+	_, _, usecase := createCustomerUseCaseWithMock(t)
 
 	dto := usecases.CustomerCreateRequest{}
-	customer, err := useCase.Create(dto)
+	customer, err := usecase.Create(dto)
 	require.Nil(t, customer)
 	require.NotNil(t, err)
+}
+
+func Test_ListAllCustomers(t *testing.T) {
+	_, repoMock, usecase := createCustomerUseCaseWithMock(t)
+
+	repoMock.
+		EXPECT().
+		ListAll(gomock.Any(), gomock.Any()).
+		Return([]models.Customer{}, nil).
+		Times(1)
+
+	limit, page := 1,1
+	customersList, err := usecase.List(limit, page)
+	require.IsType(t, customersList, []models.Customer{})
+	require.NotNil(t, customersList)
+	require.Nil(t, err)
+
+	repoMock.
+		EXPECT().
+		ListAll(gomock.Any(), gomock.Any()).
+		Return(nil, errors.New("repository's error")).
+		Times(1)
+	customersList, err = usecase.List(limit, page)
+	require.Nil(t, customersList)
+	require.NotNil(t, err)
+	require.Error(t, err, "repository's error")
 }

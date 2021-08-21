@@ -6,5 +6,6 @@ import (
 
 type Customer interface {
 	Create(c *models.Customer) (*models.Customer, error)
-	List() ([]models.Customer, error)
+	FindById(id models.ID) (*models.Customer, error)
+	ListAll(limit int, page int) ([]models.Customer, error)
 }

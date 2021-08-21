@@ -49,17 +49,32 @@ func (mr *MockCustomerMockRecorder) Create(c interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockCustomer)(nil).Create), c)
 }
 
-// List mocks base method.
-func (m *MockCustomer) List() ([]models.Customer, error) {
+// FindById mocks base method.
+func (m *MockCustomer) FindById(id models.ID) (*models.Customer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "List")
+	ret := m.ctrl.Call(m, "FindById", id)
+	ret0, _ := ret[0].(*models.Customer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindById indicates an expected call of FindById.
+func (mr *MockCustomerMockRecorder) FindById(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindById", reflect.TypeOf((*MockCustomer)(nil).FindById), id)
+}
+
+// ListAll mocks base method.
+func (m *MockCustomer) ListAll(limit, page int) ([]models.Customer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListAll", limit, page)
 	ret0, _ := ret[0].([]models.Customer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// List indicates an expected call of List.
-func (mr *MockCustomerMockRecorder) List() *gomock.Call {
+// ListAll indicates an expected call of ListAll.
+func (mr *MockCustomerMockRecorder) ListAll(limit, page interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockCustomer)(nil).List))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAll", reflect.TypeOf((*MockCustomer)(nil).ListAll), limit, page)
 }

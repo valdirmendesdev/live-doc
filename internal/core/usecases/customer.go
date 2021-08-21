@@ -49,3 +49,11 @@ func (c *Customer) Create(dto CustomerCreateRequest) (*models.Customer, error) {
 
 	return createdCustomer, nil
 }
+
+func (c *Customer) List(limit int, page int) ([]models.Customer, error) {
+	customersList, err := c.Repo.ListAll(limit, page)
+	if err != nil {
+		return nil, err
+	}
+	return customersList, nil
+}
