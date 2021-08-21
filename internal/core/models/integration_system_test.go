@@ -24,6 +24,7 @@ func Test_IntegrationSystemIsValid(t *testing.T) {
 
 	isValid, err := is.IsValid()
 	require.False(t, isValid)
+	require.NotNil(t, err)
 	require.EqualError(t, err, "system type must be filled")
 
 	is.SystemType = "test"
@@ -41,4 +42,8 @@ func Test_IntegrationSystemIsValid(t *testing.T) {
 	require.False(t, isValid)
 	require.EqualError(t, err, "communication type is not valid")
 
+	is.CommunicationType = models.EccHttp
+	isValid, err = is.IsValid()
+	require.True(t, isValid)
+	require.Nil(t, err)
 }
