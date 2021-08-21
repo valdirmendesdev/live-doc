@@ -2,6 +2,7 @@ package usecases_test
 
 import (
 	"errors"
+	"github.com/google/uuid"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -11,6 +12,8 @@ import (
 	"github.com/valdirmendesdev/live-doc/internal/core/repositories/mocks"
 	"github.com/valdirmendesdev/live-doc/internal/core/usecases"
 )
+
+const errorReposityText = "repository's error"
 
 func createCustomerUseCaseWithMock(t *testing.T) (*gomock.Controller, *mocks.MockCustomer, *usecases.Customer) {
 	ctrl := gomock.NewController(t)
@@ -70,7 +73,7 @@ func Test_RepositoryErrorCreateCustomer(t *testing.T) {
 		EXPECT().
 		Create(gomock.Any()).
 		DoAndReturn(func(customer *models.Customer) (*models.Customer, error) {
-			return nil, errors.New("repository's error")
+			return nil, errors.New(errorReposityText)
 		}).
 		Times(1)
 
@@ -98,22 +101,53 @@ func Test_ListAllCustomers(t *testing.T) {
 	repoMock.
 		EXPECT().
 		ListAll(gomock.Any(), gomock.Any()).
-		Return([]models.Customer{}, nil).
-		Times(1)
+		DoAndReturn(func(limit int, page int) ([]models.Customer, error) {
+			if page == -1 {
+				return nil, errors.New(errorReposityText)
+			}
+			return []models.Customer{}, nil
+		}).
+		Times(2)
 
-	limit, page := 1,1
-	customersList, err := usecase.List(limit, page)
+	limit, page := 10, 1
+	customersList, err := usecase.ListAll(limit, page)
 	require.IsType(t, customersList, []models.Customer{})
 	require.NotNil(t, customersList)
 	require.Nil(t, err)
 
-	repoMock.
-		EXPECT().
-		ListAll(gomock.Any(), gomock.Any()).
-		Return(nil, errors.New("repository's error")).
-		Times(1)
-	customersList, err = usecase.List(limit, page)
+	//Repostiry error
+	page = -1
+	customersList, err = usecase.ListAll(limit, page)
 	require.Nil(t, customersList)
 	require.NotNil(t, err)
-	require.Error(t, err, "repository's error")
+	require.EqualError(t, err, errorReposityText)
+}
+
+func Test_FindCustomerById(t *testing.T) {
+	_, repoMock, usecase := createCustomerUseCaseWithMock(t)
+
+	repoMock.
+		EXPECT().
+		FindById(gomock.Any()).
+		DoAndReturn(func(id models.ID) (*models.Customer, error) {
+			if id == uuid.Nil {
+				return nil, errors.New(errorReposityText)
+			}
+			return &models.Customer{}, nil
+		}).
+		Times(2)
+
+	var customerID models.ID
+	customer, err := usecase.FindById(customerID)
+	require.IsType(t, customer, &models.Customer{})
+	require.Nil(t, customer)
+	require.NotNil(t, err)
+	require.EqualError(t, err, errorReposityText)
+
+	customerID = models.NewUUID()
+	customer, err = usecase.FindById(customerID)
+	require.IsType(t, customer, &models.Customer{})
+	require.NotNil(t, customer)
+	require.Nil(t, err)
+
 }

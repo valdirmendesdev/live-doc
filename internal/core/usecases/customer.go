@@ -50,10 +50,18 @@ func (c *Customer) Create(dto CustomerCreateRequest) (*models.Customer, error) {
 	return createdCustomer, nil
 }
 
-func (c *Customer) List(limit int, page int) ([]models.Customer, error) {
+func (c *Customer) ListAll(limit int, page int) ([]models.Customer, error) {
 	customersList, err := c.Repo.ListAll(limit, page)
 	if err != nil {
 		return nil, err
 	}
 	return customersList, nil
+}
+
+func (c *Customer) FindById(id models.ID) (*models.Customer, error) {
+	customer, err := c.Repo.FindById(id)
+	if err != nil {
+		return nil, err
+	}
+	return customer, nil
 }
