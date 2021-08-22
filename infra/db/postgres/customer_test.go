@@ -50,7 +50,7 @@ func Test_FindCustomerById(t *testing.T) {
 		"SELECT id, fiscal_id, corporate_name, ",
 		"trade_name, address, number, city, state, ",
 		"zip, complement, created_at, updated_at ",
-		"WHERE customers WHERE id = \\$1",
+		"FROM customers WHERE id=\\$1",
 	)
 
 	rows := sqlmock.NewRows([]string{"id",

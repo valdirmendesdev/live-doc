@@ -29,7 +29,7 @@ func (r *CustomerRepository) FindById(id models.ID) (*models.Customer, error) {
 		"SELECT id, fiscal_id, corporate_name, ",
 		"trade_name, address, number, city, state, ",
 		"zip, complement, created_at, updated_at ",
-		"WHERE customers WHERE id = $1",
+		"FROM customers WHERE id=$1",
 	)
 	err := r.db.QueryRow(sqlStatement, id.String()).
 	Scan(&c.ID, &c.FiscalID, &c.CorporateName, &c.TradeName, &c.Address,
