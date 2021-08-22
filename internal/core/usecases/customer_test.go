@@ -149,5 +149,4 @@ func Test_FindCustomerById(t *testing.T) {
 	require.IsType(t, customer, &models.Customer{})
 	require.NotNil(t, customer)
 	require.Nil(t, err)
-
 }

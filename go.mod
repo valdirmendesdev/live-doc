@@ -3,9 +3,12 @@ module github.com/valdirmendesdev/live-doc
 go 1.17
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/gofiber/fiber/v2 v2.17.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
+	github.com/jeffotoni/gconcat v0.0.10
+	github.com/lib/pq v1.10.2
 	github.com/stretchr/testify v1.7.0
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.13
