@@ -1,13 +1,14 @@
-package models
+package entities
 
 import (
 	"errors"
+	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 	"time"
 )
 
 type Customer struct {
-	ID            ID
-	FiscalID      string    //TODO: Change the type to CNPJ
+	ID            types.ID
+	FiscalID      string //TODO: Change the type to CNPJ
 	CorporateName string
 	TradeName     string
 	Address       string
@@ -22,7 +23,7 @@ type Customer struct {
 
 func NewCustomer() Customer {
 	return Customer{
-		ID:        NewUUID(),
+		ID:        types.NewID(),
 		CreatedAt: time.Now(),
 	}
 }

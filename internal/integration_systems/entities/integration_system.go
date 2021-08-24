@@ -1,4 +1,4 @@
-package models
+package entities
 
 import "errors"
 
@@ -67,7 +67,7 @@ func (is *IntegrationSystem) IsValid() (bool, error) {
 		is.CommunicationType != CPI &&
 		is.CommunicationType != PI &&
 		is.CommunicationType != PO &&
-		is.CommunicationType != External  {
+		is.CommunicationType != External {
 		return false, errors.New("communication type is not valid")
 	}
 

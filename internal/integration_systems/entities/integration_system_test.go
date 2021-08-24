@@ -1,20 +1,20 @@
-package models_test
+package entities_test
 
 import (
 	"github.com/stretchr/testify/require"
-	"github.com/valdirmendesdev/live-doc/internal/core/models"
+	"github.com/valdirmendesdev/live-doc/internal/integration_systems/entities"
 	"testing"
 )
 
-func createIntegrationSystem() models.IntegrationSystem {
-	return models.NewIntegrationSystem(models.SAP, models.EccHttp)
+func createIntegrationSystem() entities.IntegrationSystem {
+	return entities.NewIntegrationSystem(entities.SAP, entities.EccHttp)
 }
 
 func Test_NewIntegrationSystem(t *testing.T) {
 	is := createIntegrationSystem()
 	require.NotNil(t, is)
-	require.Equal(t, models.SAP, is.SystemType)
-	require.Equal(t, models.EccHttp, is.CommunicationType)
+	require.Equal(t, entities.SAP, is.SystemType)
+	require.Equal(t, entities.EccHttp, is.CommunicationType)
 }
 
 func Test_IntegrationSystemIsValid(t *testing.T) {
@@ -32,7 +32,7 @@ func Test_IntegrationSystemIsValid(t *testing.T) {
 	require.False(t, isValid)
 	require.EqualError(t, err, "system type is not valid")
 
-	is.SystemType = models.SAP
+	is.SystemType = entities.SAP
 	isValid, err = is.IsValid()
 	require.False(t, isValid)
 	require.EqualError(t, err, "communication type must be filled")
@@ -42,7 +42,7 @@ func Test_IntegrationSystemIsValid(t *testing.T) {
 	require.False(t, isValid)
 	require.EqualError(t, err, "communication type is not valid")
 
-	is.CommunicationType = models.EccHttp
+	is.CommunicationType = entities.EccHttp
 	isValid, err = is.IsValid()
 	require.True(t, isValid)
 	require.Nil(t, err)

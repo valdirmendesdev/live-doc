@@ -1,24 +1,25 @@
-package usecases_test
+package services_test
 
 import (
 	"errors"
 	"github.com/google/uuid"
+	"github.com/valdirmendesdev/live-doc/internal/customers/dto"
+	"github.com/valdirmendesdev/live-doc/internal/customers/entities"
+	"github.com/valdirmendesdev/live-doc/internal/customers/mocks"
+	"github.com/valdirmendesdev/live-doc/internal/customers/services"
+	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
-
-	"github.com/valdirmendesdev/live-doc/internal/core/models"
-	"github.com/valdirmendesdev/live-doc/internal/core/repositories/mocks"
-	"github.com/valdirmendesdev/live-doc/internal/core/usecases"
 )
 
 const errorReposityText = "repository's error"
 
-func createCustomerUseCaseWithMock(t *testing.T) (*gomock.Controller, *mocks.MockCustomer, *usecases.Customer) {
+func createCustomerUseCaseWithMock(t *testing.T) (*gomock.Controller, *mocks.MockCustomer, *services.Customer) {
 	ctrl := gomock.NewController(t)
 	repoMock := mocks.NewMockCustomer(ctrl)
-	useCase := usecases.NewCustomer(repoMock)
+	useCase := services.NewCustomer(repoMock)
 	return ctrl, repoMock, useCase
 }
 
@@ -35,12 +36,12 @@ func Test_SuccessCustomerCreate(t *testing.T) {
 	repoMock.
 		EXPECT().
 		Create(gomock.Any()).
-		DoAndReturn(func(customer *models.Customer) (*models.Customer, error) {
+		DoAndReturn(func(customer *entities.Customer) (*entities.Customer, error) {
 			return customer, nil
 		}).
 		Times(1)
 
-	dto := usecases.CustomerCreateRequest{
+	createRequest := dto.CreateRequest{
 		FiscalID:      "test",
 		CorporateName: "test",
 		TradeName:     "test",
@@ -52,18 +53,18 @@ func Test_SuccessCustomerCreate(t *testing.T) {
 		Complement:    "test",
 	}
 
-	customer, err := usecase.Create(dto)
+	customer, err := usecase.Create(createRequest)
 	require.NotNil(t, customer)
 	require.Nil(t, err)
-	require.Equal(t, dto.FiscalID, customer.FiscalID)
-	require.Equal(t, dto.CorporateName, customer.CorporateName)
-	require.Equal(t, dto.TradeName, customer.TradeName)
-	require.Equal(t, dto.Address, customer.Address)
-	require.Equal(t, dto.Number, customer.Number)
-	require.Equal(t, dto.City, customer.City)
-	require.Equal(t, dto.State, customer.State)
-	require.Equal(t, dto.Zip, customer.Zip)
-	require.Equal(t, dto.Complement, customer.Complement)
+	require.Equal(t, createRequest.FiscalID, customer.FiscalID)
+	require.Equal(t, createRequest.CorporateName, customer.CorporateName)
+	require.Equal(t, createRequest.TradeName, customer.TradeName)
+	require.Equal(t, createRequest.Address, customer.Address)
+	require.Equal(t, createRequest.Number, customer.Number)
+	require.Equal(t, createRequest.City, customer.City)
+	require.Equal(t, createRequest.State, customer.State)
+	require.Equal(t, createRequest.Zip, customer.Zip)
+	require.Equal(t, createRequest.Complement, customer.Complement)
 }
 
 func Test_RepositoryErrorCreateCustomer(t *testing.T) {
@@ -72,16 +73,16 @@ func Test_RepositoryErrorCreateCustomer(t *testing.T) {
 	repoMock.
 		EXPECT().
 		Create(gomock.Any()).
-		DoAndReturn(func(customer *models.Customer) (*models.Customer, error) {
+		DoAndReturn(func(customer *entities.Customer) (*entities.Customer, error) {
 			return nil, errors.New(errorReposityText)
 		}).
 		Times(1)
 
-	dto := usecases.CustomerCreateRequest{
+	createRequest := dto.CreateRequest{
 		FiscalID:      "test",
 		CorporateName: "test",
 	}
-	customer, err := usecase.Create(dto)
+	customer, err := usecase.Create(createRequest)
 	require.Nil(t, customer)
 	require.NotNil(t, err)
 }
@@ -89,8 +90,8 @@ func Test_RepositoryErrorCreateCustomer(t *testing.T) {
 func Test_InvalidCustomerCreateCustomer(t *testing.T) {
 	_, _, usecase := createCustomerUseCaseWithMock(t)
 
-	dto := usecases.CustomerCreateRequest{}
-	customer, err := usecase.Create(dto)
+	createRequest := dto.CreateRequest{}
+	customer, err := usecase.Create(createRequest)
 	require.Nil(t, customer)
 	require.NotNil(t, err)
 }
@@ -101,17 +102,17 @@ func Test_ListAllCustomers(t *testing.T) {
 	repoMock.
 		EXPECT().
 		ListAll(gomock.Any(), gomock.Any()).
-		DoAndReturn(func(limit int, page int) ([]models.Customer, error) {
+		DoAndReturn(func(limit int, page int) ([]entities.Customer, error) {
 			if page == -1 {
 				return nil, errors.New(errorReposityText)
 			}
-			return []models.Customer{}, nil
+			return []entities.Customer{}, nil
 		}).
 		Times(2)
 
 	limit, page := 10, 1
 	customersList, err := usecase.ListAll(limit, page)
-	require.IsType(t, customersList, []models.Customer{})
+	require.IsType(t, customersList, []entities.Customer{})
 	require.NotNil(t, customersList)
 	require.Nil(t, err)
 
@@ -129,24 +130,24 @@ func Test_FindCustomerById(t *testing.T) {
 	repoMock.
 		EXPECT().
 		FindById(gomock.Any()).
-		DoAndReturn(func(id models.ID) (*models.Customer, error) {
+		DoAndReturn(func(id types.ID) (*entities.Customer, error) {
 			if id == uuid.Nil {
 				return nil, errors.New(errorReposityText)
 			}
-			return &models.Customer{}, nil
+			return &entities.Customer{}, nil
 		}).
 		Times(2)
 
-	var customerID models.ID
+	var customerID types.ID
 	customer, err := usecase.FindById(customerID)
-	require.IsType(t, customer, &models.Customer{})
+	require.IsType(t, customer, &entities.Customer{})
 	require.Nil(t, customer)
 	require.NotNil(t, err)
 	require.EqualError(t, err, errorReposityText)
 
-	customerID = models.NewUUID()
+	customerID = types.NewID()
 	customer, err = usecase.FindById(customerID)
-	require.IsType(t, customer, &models.Customer{})
+	require.IsType(t, customer, &entities.Customer{})
 	require.NotNil(t, customer)
 	require.Nil(t, err)
 }

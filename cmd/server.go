@@ -3,10 +3,8 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/valdirmendesdev/live-doc/internal/core/models"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-
+	_ "github.com/lib/pq"
+	"github.com/valdirmendesdev/live-doc/internal/customers/handlers"
 )
 
 func main() {
@@ -19,15 +17,18 @@ func main() {
 		})
 	})
 
-	database, err := gorm.Open(sqlite.Open("test.models"), &gorm.Config{})
-	if err != nil {
-		panic("failed to open database")
-	}
+	//database, err := gorm.Open(sqlite.Open("test.models"), &gorm.Config{})
+	//if err != nil {
+	//	panic("failed to open database")
+	//}
+	//
+	//database.AutoMigrate(&models.Customer{})
+	//database.Create(&models.Customer{
+	//	FiscalID: "25215772000171",
+	//})
 
-	database.AutoMigrate(&models.Customer{})
-	database.Create(&models.Customer{
-		FiscalID: "25215772000171",
-	})
+	app.Get("/customers/:id", handlers.FindById)
 
 	app.Listen(":8080")
+
 }

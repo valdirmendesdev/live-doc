@@ -3,9 +3,10 @@ package postgres
 import (
 	"database/sql"
 	g "github.com/jeffotoni/gconcat"
-
 	_ "github.com/lib/pq"
-	"github.com/valdirmendesdev/live-doc/internal/core/models"
+
+	"github.com/valdirmendesdev/live-doc/internal/customers/entities"
+	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 )
 
 type CustomerRepository struct {
@@ -18,12 +19,12 @@ func NewCustomerRepository(db *sql.DB) (CustomerRepository, error) {
 	}, nil
 }
 
-func (r *CustomerRepository) Create(c *models.Customer) (*models.Customer, error) {
+func (r *CustomerRepository) Create(c *entities.Customer) (*entities.Customer, error) {
 	panic("implement me")
 }
 
-func (r *CustomerRepository) FindById(id models.ID) (*models.Customer, error) {
-	c := new(models.Customer)
+func (r *CustomerRepository) FindById(id types.ID) (*entities.Customer, error) {
+	c := new(entities.Customer)
 
 	sqlStatement := g.Concat(
 		"SELECT id, fiscal_id, corporate_name, ",
@@ -32,15 +33,15 @@ func (r *CustomerRepository) FindById(id models.ID) (*models.Customer, error) {
 		"FROM customers WHERE id=$1",
 	)
 	err := r.db.QueryRow(sqlStatement, id.String()).
-	Scan(&c.ID, &c.FiscalID, &c.CorporateName, &c.TradeName, &c.Address,
-		&c.Number, &c.City, &c.State, &c.Zip, &c.Complement, &c.CreatedAt, &c.UpdatedAt)
+		Scan(&c.ID, &c.FiscalID, &c.CorporateName, &c.TradeName, &c.Address,
+			&c.Number, &c.City, &c.State, &c.Zip, &c.Complement, &c.CreatedAt, &c.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
 	return c, nil
 }
 
-func (r *CustomerRepository) ListAll(limit int, page int) ([]models.Customer, error) {
+func (r *CustomerRepository) ListAll(limit int, page int) ([]entities.Customer, error) {
 	panic("implement me")
 }
 

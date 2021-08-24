@@ -1,8 +1,10 @@
-package usecases
+package services
 
 import (
-	"github.com/valdirmendesdev/live-doc/internal/core/models"
-	"github.com/valdirmendesdev/live-doc/internal/core/repositories"
+	"github.com/valdirmendesdev/live-doc/internal/customers/dto"
+	"github.com/valdirmendesdev/live-doc/internal/customers/entities"
+	"github.com/valdirmendesdev/live-doc/internal/customers/repositories"
+	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 )
 
 type Customer struct {
@@ -13,20 +15,8 @@ func NewCustomer(repo repositories.Customer) *Customer {
 	return &Customer{Repo: repo}
 }
 
-type CustomerCreateRequest struct {
-	FiscalID      string
-	CorporateName string
-	TradeName     string
-	Address       string
-	Number        string
-	City          string
-	State         string
-	Zip           string
-	Complement    string
-}
-
-func (c *Customer) Create(dto CustomerCreateRequest) (*models.Customer, error) {
-	customer := models.NewCustomer()
+func (c *Customer) Create(dto dto.CreateRequest) (*entities.Customer, error) {
+	customer := entities.NewCustomer()
 	customer.FiscalID = dto.FiscalID
 	customer.CorporateName = dto.CorporateName
 	customer.TradeName = dto.TradeName
@@ -50,7 +40,7 @@ func (c *Customer) Create(dto CustomerCreateRequest) (*models.Customer, error) {
 	return createdCustomer, nil
 }
 
-func (c *Customer) ListAll(limit int, page int) ([]models.Customer, error) {
+func (c *Customer) ListAll(limit int, page int) ([]entities.Customer, error) {
 	customersList, err := c.Repo.ListAll(limit, page)
 	if err != nil {
 		return nil, err
@@ -58,7 +48,7 @@ func (c *Customer) ListAll(limit int, page int) ([]models.Customer, error) {
 	return customersList, nil
 }
 
-func (c *Customer) FindById(id models.ID) (*models.Customer, error) {
+func (c *Customer) FindById(id types.ID) (*entities.Customer, error) {
 	customer, err := c.Repo.FindById(id)
 	if err != nil {
 		return nil, err

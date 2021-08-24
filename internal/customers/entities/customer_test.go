@@ -1,13 +1,13 @@
-package models_test
+package entities_test
 
 import (
 	"github.com/stretchr/testify/require"
-	"github.com/valdirmendesdev/live-doc/internal/core/models"
+	"github.com/valdirmendesdev/live-doc/internal/customers/entities"
 	"testing"
 )
 
 func Test_NewCustomer(t *testing.T) {
-	u := models.NewCustomer()
+	u := entities.NewCustomer()
 	require.NotNil(t, u)
 	require.NotNil(t, u.ID)
 	require.False(t, u.CreatedAt.IsZero())
@@ -15,7 +15,7 @@ func Test_NewCustomer(t *testing.T) {
 }
 
 func Test_CustomerIsValid(t *testing.T) {
-	u := models.NewCustomer()
+	u := entities.NewCustomer()
 	isValid, err := u.IsValid()
 	require.False(t, isValid)
 	require.NotNil(t, err)
