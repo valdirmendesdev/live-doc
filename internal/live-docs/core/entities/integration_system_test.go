@@ -2,7 +2,7 @@ package entities_test
 
 import (
 	"github.com/stretchr/testify/require"
-	"github.com/valdirmendesdev/live-doc/internal/integration_systems/entities"
+	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"testing"
 )
 

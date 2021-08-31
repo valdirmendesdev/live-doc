@@ -4,8 +4,7 @@ import (
 	"database/sql"
 	g "github.com/jeffotoni/gconcat"
 	_ "github.com/lib/pq"
-
-	"github.com/valdirmendesdev/live-doc/internal/customers/entities"
+	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 )
 
@@ -19,11 +18,11 @@ func NewCustomerRepository(db *sql.DB) (CustomerRepository, error) {
 	}, nil
 }
 
-func (r *CustomerRepository) Create(c *entities.Customer) (*entities.Customer, error) {
+func (r *CustomerRepository) Add(c *entities.Customer) (*entities.Customer, error) {
 	panic("implement me")
 }
 
-func (r *CustomerRepository) FindById(id types.ID) (*entities.Customer, error) {
+func (r *CustomerRepository) GetById(id types.ID) (*entities.Customer, error) {
 	c := new(entities.Customer)
 
 	sqlStatement := g.Concat(
@@ -41,7 +40,7 @@ func (r *CustomerRepository) FindById(id types.ID) (*entities.Customer, error) {
 	return c, nil
 }
 
-func (r *CustomerRepository) ListAll(limit int, page int) ([]entities.Customer, error) {
+func (r *CustomerRepository) All(limit int, page int) ([]entities.Customer, error) {
 	panic("implement me")
 }
 

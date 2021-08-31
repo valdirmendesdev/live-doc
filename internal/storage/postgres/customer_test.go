@@ -3,8 +3,9 @@ package postgres_test
 import (
 	"database/sql"
 	"github.com/stretchr/testify/require"
-	"github.com/valdirmendesdev/live-doc/infra/db/postgres"
-	"github.com/valdirmendesdev/live-doc/internal/core/models"
+	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
+	"github.com/valdirmendesdev/live-doc/internal/storage/postgres"
+	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 	"testing"
 	"time"
 
@@ -26,8 +27,8 @@ func NewMock(t *testing.T) (*sql.DB, sqlmock.Sqlmock, postgres.CustomerRepositor
 	return db, mock, repo
 }
 
-var c = &models.Customer{
-	ID:            models.NewUUID(),
+var c = &entities.Customer{
+	ID:            types.NewID(),
 	FiscalID:      "",
 	TradeName:     "",
 	CorporateName: "",
@@ -74,7 +75,7 @@ func Test_FindCustomerById(t *testing.T) {
 
 	mock.ExpectQuery(query).WithArgs(c.ID.String()).WillReturnRows(rows)
 
-	customer, err := repo.FindById(c.ID)
+	customer, err := repo.GetById(c.ID)
 	require.NotNil(t, customer)
 	require.Nil(t, err)
 }
