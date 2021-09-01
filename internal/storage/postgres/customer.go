@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
+	"log"
 )
 
 type CustomerRepository struct {
@@ -41,9 +42,41 @@ func (r *CustomerRepository) GetById(id types.ID) (*entities.Customer, error) {
 }
 
 func (r *CustomerRepository) All(limit int, page int) ([]entities.Customer, error) {
-	panic("implement me")
-}
+	sqlStatement := g.Concat(
+		"SELECT id, fiscal_id, corporate_name, ",
+		"trade_name, address, number, city, state, ",
+		"zip, complement, created_at, updated_at ",
+		"FROM customers WHERE id IS NOT NULL",
+	)
 
-func (r *CustomerRepository) Close() error {
-	return r.db.Close()
+	rows, err := r.db.Query(sqlStatement)
+	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	var customers []entities.Customer
+	for rows.Next() {
+		var c entities.Customer
+		if err := rows.Scan(
+				&c.ID,
+				&c.FiscalID,
+				&c.CorporateName,
+				&c.TradeName,
+				&c.Address,
+				&c.Number,
+				&c.City,
+				&c.State,
+				&c.Zip,
+				&c.Complement,
+				&c.CreatedAt,
+				&c.UpdatedAt,
+			) ; err != nil {
+			log.Fatal(err)
+		}
+		customers = append(customers, c)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return customers, nil
 }

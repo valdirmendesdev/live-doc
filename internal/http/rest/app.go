@@ -33,6 +33,7 @@ func (a *App) customersRoutes() error {
 	}
 	c := controllers.NewCustomer(&r)
 	g := a.router.Group("/customers")
+	g.Get("/", c.ListAll)
 	g.Get("/:id", c.FindById)
 	return nil
 }

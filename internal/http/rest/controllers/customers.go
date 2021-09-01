@@ -25,5 +25,19 @@ func (cc *Customer) FindById(c *fiber.Ctx) error {
 	s := customer.NewGetByIDService(cc.repo)
 	customer, err := s.Execute(id)
 
+	if err != nil {
+		return err
+	}
+
 	return c.JSON(customer)
+}
+
+func (cc *Customer) ListAll(c *fiber.Ctx) error {
+
+	s := customer.NewListAllService(cc.repo)
+	list, err := s.Execute(0,0)
+	if err != nil {
+		return err
+	}
+	return c.JSON(list)
 }
