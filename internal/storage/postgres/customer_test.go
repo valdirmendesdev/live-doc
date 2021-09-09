@@ -27,25 +27,25 @@ func NewMock(t *testing.T) (*sql.DB, sqlmock.Sqlmock, postgres.CustomerRepositor
 	return db, mock, repo
 }
 
-var c = &entities.Customer{
-	ID:            types.NewID(),
-	FiscalID:      "",
-	TradeName:     "",
-	CorporateName: "",
-	Address:       "",
-	Number:        "",
-	City:          "",
-	State:         "",
-	Zip:           "",
-	Complement:    "",
-	CreatedAt:     time.Time{},
-	UpdatedAt:     time.Time{},
+func newCustomer() *entities.Customer {
+	return &entities.Customer{
+		ID:            types.NewID(),
+		FiscalID:      "",
+		TradeName:     "",
+		CorporateName: "",
+		Address:       "",
+		Number:        "",
+		City:          "",
+		State:         "",
+		Zip:           "",
+		Complement:    "",
+		CreatedAt:     time.Time{},
+		UpdatedAt:     time.Time{},
+	}
 }
 
 func Test_FindCustomerById(t *testing.T) {
 	_, mock, repo := NewMock(t)
-
-	defer repo.Close()
 
 	query := g.Concat(
 		"SELECT id, fiscal_id, corporate_name, ",
@@ -53,6 +53,8 @@ func Test_FindCustomerById(t *testing.T) {
 		"zip, complement, created_at, updated_at ",
 		"FROM customers WHERE id=\\$1",
 	)
+
+	c := newCustomer()
 
 	rows := sqlmock.NewRows([]string{"id",
 		"fiscal_id", "corporate_name", "trade_name",
@@ -71,11 +73,50 @@ func Test_FindCustomerById(t *testing.T) {
 			c.Complement,
 			c.CreatedAt,
 			c.UpdatedAt,
-			)
+		)
 
 	mock.ExpectQuery(query).WithArgs(c.ID.String()).WillReturnRows(rows)
 
 	customer, err := repo.GetById(c.ID)
 	require.NotNil(t, customer)
+	require.Nil(t, err)
+}
+
+func Test_GetAll(t *testing.T) {
+	_, mock, repo := NewMock(t)
+
+	query := g.Concat(
+		"SELECT id, fiscal_id, corporate_name, ",
+		"trade_name, address, number, city, state, ",
+		"zip, complement, created_at, updated_at ",
+		"FROM customers WHERE id IS NOT NULL",
+	)
+
+	c := newCustomer()
+
+	mock.
+		ExpectQuery(query).
+		WillReturnRows(sqlmock.NewRows(
+			[]string{"id",
+				"fiscal_id", "corporate_name", "trade_name",
+				"address", "number", "city", "state", "zip",
+				"complement", "created_at", "updated_at",
+			}).AddRow(
+			c.ID,
+			c.FiscalID,
+			c.CorporateName,
+			c.TradeName,
+			c.Address,
+			c.Number,
+			c.City,
+			c.State,
+			c.Zip,
+			c.Complement,
+			c.CreatedAt,
+			c.UpdatedAt),
+		)
+
+	customers, err := repo.All(0,0)
+	require.NotNil(t, customers)
 	require.Nil(t, err)
 }
