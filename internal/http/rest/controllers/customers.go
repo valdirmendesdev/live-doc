@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/customer"
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 )
@@ -29,7 +30,7 @@ func (cc *Customer) FindById(c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.JSON(customer)
+	return c.JSON(dto.CustomerToDto(*customer))
 }
 
 func (cc *Customer) ListAll(c *fiber.Ctx) error {
@@ -39,5 +40,11 @@ func (cc *Customer) ListAll(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.JSON(list)
+	var result []dto.Customer
+
+	for _, c := range list {
+		result = append(result, dto.CustomerToDto(c))
+	}
+
+	return c.JSON(result)
 }
