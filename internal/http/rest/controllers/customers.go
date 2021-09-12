@@ -5,6 +5,7 @@ import (
 	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/customer"
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
+	"net/http"
 )
 
 type Customer struct {
@@ -20,14 +21,17 @@ func NewCustomer(r customer.Repository) Customer {
 func (cc *Customer) FindById(c *fiber.Ctx) error {
 	id, err := types.ParseID(c.Params("id"))
 	if err != nil {
-		return err
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	s := customer.NewGetByIDService(cc.repo)
 	customer, err := s.Execute(id)
-
 	if err != nil {
-		return err
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	return c.JSON(dto.CustomerToDto(*customer))
@@ -36,7 +40,7 @@ func (cc *Customer) FindById(c *fiber.Ctx) error {
 func (cc *Customer) ListAll(c *fiber.Ctx) error {
 
 	s := customer.NewListAllService(cc.repo)
-	list, err := s.Execute(0,0)
+	list, err := s.Execute(0, 0)
 	if err != nil {
 		return err
 	}

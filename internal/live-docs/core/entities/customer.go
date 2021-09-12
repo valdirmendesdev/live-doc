@@ -7,24 +7,24 @@ import (
 )
 
 type Customer struct {
-	ID            types.ID
-	FiscalID      string //TODO: Change the type to CNPJ
-	CorporateName string
-	TradeName     string
-	Address       string
-	Number        string
-	City          string
-	State         string
-	Zip           string
-	Complement    string
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	Model
+	FiscalID      string `gorm:"column:fiscal_id"` //TODO: Change the type to CNPJ
+	CorporateName string `gorm:"column:corporate_name"`
+	TradeName     string `gorm:"column:trade_name"`
+	Address       string `gorm:"column:address"`
+	Number        string `gorm:"column:number"`
+	City          string `gorm:"column:city"`
+	State         string `gorm:"column:State"`
+	Zip           string `gorm:"column:zip"`
+	Complement    string `gorm:"column:complement"`
 }
 
 func NewCustomer() Customer {
 	return Customer{
-		ID:        types.NewID(),
-		CreatedAt: time.Now(),
+		Model: Model{
+			ID:        types.NewID(),
+			CreatedAt: time.Now(),
+		},
 	}
 }
 
@@ -36,4 +36,8 @@ func (c *Customer) IsValid() (bool, error) {
 		return false, errors.New("corporate name must be filled")
 	}
 	return true, nil
+}
+
+func (c *Customer) TableName() string {
+	return "customers"
 }

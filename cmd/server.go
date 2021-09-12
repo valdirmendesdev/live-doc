@@ -1,39 +1,19 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
+	"log"
+
 	_ "github.com/lib/pq"
 	"github.com/valdirmendesdev/live-doc/internal/http/rest"
 )
 
 func main() {
 
-	const (
-		host     = "localhost"
-		port     = 5432
-		user     = "postgres"
-		password = "mysecretpassword"
-		dbname   = "postgres"
-	)
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Successfully connected!")
-
-	app := rest.NewApp(db)
+	app := rest.NewApp()
 	app.Setup()
-	app.Serve()
+	err := app.Serve()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

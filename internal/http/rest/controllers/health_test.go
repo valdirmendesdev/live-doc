@@ -1,7 +1,7 @@
 package controllers_test
 
 import (
-	"bytes"
+	"io"
 	"net/http"
 	"testing"
 
@@ -20,11 +20,19 @@ func Test_HealthCheck(t *testing.T) {
 	hc := controllers.NewHealth()
 	app.Get("/health", hc.Status)
 
-	res, _ := app.Test(req)
+	res, err := app.Test(req)
+	if err != nil {
+		t.Log(err)
+		return
+	}
 
 	assert.Equal(t, http.StatusOK, res.StatusCode)
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(res.Body)
-	assert.Equal(t, `{"message":"OK!"}`, buf.String())
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+
+	assert.Equal(t, `{"message":"OK!"}`, string(body))
 
 }

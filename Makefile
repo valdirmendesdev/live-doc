@@ -3,7 +3,7 @@ TEST_RUN = ""
 .PHONY: test
 
 test:
-	$(GO) test -v ./... -run $(TEST_RUN)
+	$(GO) test ./... -run $(TEST_RUN)
 
 build-test-coverage:
 	$(GO) test ./... -coverprofile=coverage/profile.out

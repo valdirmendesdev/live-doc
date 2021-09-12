@@ -6,6 +6,11 @@ import (
 	"testing"
 )
 
+func Test_TableName(t *testing.T) {
+	customer := entities.NewCustomer()
+	require.Equal(t, "customers", customer.TableName())
+}
+
 func Test_NewCustomer(t *testing.T) {
 	u := entities.NewCustomer()
 	require.NotNil(t, u)
