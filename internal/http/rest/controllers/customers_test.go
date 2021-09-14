@@ -29,7 +29,7 @@ func createCustomerController(t *testing.T) (*mocks.MockCustomer, controllers.Cu
 	return r, c
 }
 
-func Test_FindByID(t *testing.T) {
+func Test_CustomerFindByID(t *testing.T) {
 	tests := []struct {
 		name       string
 		id         string
@@ -60,7 +60,7 @@ func Test_FindByID(t *testing.T) {
 			app.Get("/:id", cc.FindById)
 
 			if test.error != nil {
-				id, err :=  types.ParseID(test.id)
+				id, err := types.ParseID(test.id)
 				if err != nil {
 					t.Log(err)
 					return
@@ -92,52 +92,52 @@ func Test_FindByID(t *testing.T) {
 			assert.Equal(t, string(body), test.body)
 		})
 	}
+
+	t.Run("Success way", func(t *testing.T) {
+		r, cc := createCustomerController(t)
+		app := fiber.New()
+		app.Get("/:id", cc.FindById)
+
+		c := entities.NewCustomer()
+		c.FiscalID = "test"
+		c.CorporateName = "test"
+		c.TradeName = "test"
+		c.Address = "test"
+		c.Number = "test"
+		c.City = "test"
+		c.State = "test"
+		c.Zip = "test"
+		c.Complement = "test"
+		r.EXPECT().
+			GetById(c.ID).
+			Return(&c, nil)
+
+		cDTO := dto2.CustomerToDto(c)
+
+		req, err := http.NewRequest("GET", "/"+c.ID.String(), nil)
+		if err != nil {
+			t.Log(err)
+			return
+		}
+
+		res, err := app.Test(req)
+		if err != nil {
+			t.Log(err)
+			return
+		}
+
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			t.Log(err)
+			return
+		}
+		j, _ := json.Marshal(cDTO)
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+		assert.Equal(t, string(body), string(j))
+	})
 }
 
-func Test_FindByID_Success(t *testing.T) {
-	r, cc := createCustomerController(t)
-	app := fiber.New()
-	app.Get("/:id", cc.FindById)
-
-	c := entities.NewCustomer()
-	c.FiscalID = "test"
-	c.CorporateName = "test"
-	c.TradeName = "test"
-	c.Address = "test"
-	c.Number = "test"
-	c.City = "test"
-	c.State = "test"
-	c.Zip = "test"
-	c.Complement = "test"
-	r.EXPECT().
-		GetById(c.ID).
-		Return(&c, nil)
-
-	cDTO := dto2.CustomerToDto(c)
-
-	req, err := http.NewRequest("GET", "/"+c.ID.String(), nil)
-	if err != nil {
-		t.Log(err)
-		return
-	}
-
-	res, err := app.Test(req)
-	if err != nil {
-		t.Log(err)
-		return
-	}
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		t.Log(err)
-		return
-	}
-	j, _ := json.Marshal(cDTO)
-	assert.Equal(t, http.StatusOK, res.StatusCode)
-	assert.Equal(t, string(body), string(j))
-}
-
-func Test_ListAll(t *testing.T) {
+func Test_CustomerListAll(t *testing.T) {
 	t.Run("All Customers", func(t *testing.T) {
 		r, cc := createCustomerController(t)
 		app := fiber.New()
@@ -145,7 +145,7 @@ func Test_ListAll(t *testing.T) {
 
 		r.
 			EXPECT().
-			All(gomock.Any(),gomock.Any()).
+			All(gomock.Any(), gomock.Any()).
 			Return([]entities.Customer{}, nil)
 
 		req, err := http.NewRequest("GET", "/", nil)
