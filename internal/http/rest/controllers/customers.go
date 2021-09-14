@@ -29,7 +29,7 @@ func (cc *Customer) FindById(c *fiber.Ctx) error {
 	s := customer.NewGetByIDService(cc.repo)
 	customer, err := s.Execute(id)
 	if err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
