@@ -1,6 +1,9 @@
 package controllers_test
 
 import (
+	"encoding/json"
+	dto2 "github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
+	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"gorm.io/gorm"
 	"io"
 	"net/http"
@@ -59,6 +62,9 @@ func Test_CustomerFindByID_CustomerNotFound(t *testing.T) {
 	app.Get("/:id", cc.FindById)
 
 	id := types.NewID()
+	r.EXPECT().
+		GetById(id).
+		Return(nil, gorm.ErrRecordNotFound)
 
 	req, err := http.NewRequest("GET", "/"+id.String(), nil)
 	if err != nil {
@@ -66,9 +72,6 @@ func Test_CustomerFindByID_CustomerNotFound(t *testing.T) {
 		return
 	}
 
-	r.EXPECT().
-		GetById(id).
-		Return(nil, gorm.ErrRecordNotFound)
 	res, err := app.Test(req)
 	if err != nil {
 		t.Log(err)
@@ -83,4 +86,47 @@ func Test_CustomerFindByID_CustomerNotFound(t *testing.T) {
 
 	assert.Equal(t, http.StatusNotFound, res.StatusCode)
 	assert.Equal(t, string(body), `{"error":"record not found"}`)
+}
+
+func Test_CustomerFindByID(t *testing.T) {
+	r, cc := createCustomerController(t)
+	app := fiber.New()
+	app.Get("/:id", cc.FindById)
+
+	c := entities.NewCustomer()
+	c.FiscalID = "test"
+	c.CorporateName = "test"
+	c.TradeName = "test"
+	c.Address = "test"
+	c.Number = "test"
+	c.City = "test"
+	c.State = "test"
+	c.Zip = "test"
+	c.Complement = "test"
+	r.EXPECT().
+		GetById(c.ID).
+		Return(&c, nil)
+
+	cDTO := dto2.CustomerToDto(c)
+
+	req, err := http.NewRequest("GET", "/"+c.ID.String(), nil)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+
+	res, err := app.Test(req)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	j, _ := json.Marshal(cDTO)
+	assert.Equal(t, http.StatusOK, res.StatusCode)
+	assert.Equal(t, string(body), string(j))
 }
