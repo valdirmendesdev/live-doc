@@ -2,6 +2,7 @@ package customer_test
 
 import (
 	"errors"
+	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
 	cs "github.com/valdirmendesdev/live-doc/internal/live-docs/core/customer"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/mocks"
@@ -38,7 +39,7 @@ func Test_SuccessCustomerCreate(t *testing.T) {
 		}).
 		Times(1)
 
-	d := cs.CreateDTO{
+	d := dto.CustomerCreate{
 		FiscalID:      "test",
 		CorporateName: "test",
 		TradeName:     "test",
@@ -75,7 +76,7 @@ func Test_CreateRepositoryError(t *testing.T) {
 		}).
 		Times(1)
 
-	d := cs.CreateDTO{
+	d := dto.CustomerCreate{
 		FiscalID:      "test",
 		CorporateName: "test",
 	}
@@ -87,7 +88,7 @@ func Test_CreateRepositoryError(t *testing.T) {
 func Test_InvalidCreateInputData(t *testing.T) {
 	_, _, s := createService(t)
 
-	d := cs.CreateDTO{}
+	d := dto.CustomerCreate{}
 	c, err := s.Execute(d)
 	require.Nil(t, c)
 	require.NotNil(t, err)

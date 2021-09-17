@@ -45,7 +45,7 @@ func Test_CustomerFindByID(t *testing.T) {
 			body:       `{"error":"invalid UUID length: 4"}`,
 		},
 		{
-			name:       "Customer Not Found",
+			name:       "CustomerView Not Found",
 			id:         types.NewID().String(),
 			error:      gorm.ErrRecordNotFound,
 			statusCode: http.StatusNotFound,
@@ -112,7 +112,7 @@ func Test_CustomerFindByID(t *testing.T) {
 			GetById(c.ID).
 			Return(&c, nil)
 
-		cDTO := dto2.CustomerToDto(c)
+		cDTO := dto2.EntityToCustomerViewDto(c)
 
 		req, err := http.NewRequest("GET", "/"+c.ID.String(), nil)
 		if err != nil {

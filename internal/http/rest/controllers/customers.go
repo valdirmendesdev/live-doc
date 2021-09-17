@@ -34,7 +34,7 @@ func (cc *Customer) FindById(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(dto.CustomerToDto(*customer))
+	return c.JSON(dto.EntityToCustomerViewDto(*customer))
 }
 
 func (cc *Customer) ListAll(c *fiber.Ctx) error {
@@ -44,10 +44,10 @@ func (cc *Customer) ListAll(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	var result []dto.Customer
+	var result []dto.CustomerView
 
 	for _, c := range list {
-		result = append(result, dto.CustomerToDto(c))
+		result = append(result, dto.EntityToCustomerViewDto(c))
 	}
 
 	return c.JSON(result)
