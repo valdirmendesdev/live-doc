@@ -25,13 +25,6 @@ func (a *App) healthRoutes() {
 }
 
 func (a *App) customersRoutes() error {
-	// db, err := gorm.Open(pg.New(pg.Config{
-	// 	Conn: a.db,
-	// }))
-	// if err != nil {
-	// 	return err
-	// }
-	// db.AutoMigrate(&entities.Customer{})
 	r := postgres.NewCustomerRepository()
 	c := controllers.NewCustomer(&r)
 	g := a.router.Group("/customers")
