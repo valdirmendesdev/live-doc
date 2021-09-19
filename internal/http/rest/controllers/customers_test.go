@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
-	dto2 "github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"gorm.io/gorm"
 
@@ -129,7 +128,7 @@ func Test_CustomerFindByID(t *testing.T) {
 			GetById(c.ID).
 			Return(&c, nil)
 
-		cDTO := dto2.EntityToCustomerViewDto(c)
+		cDTO := dto.EntityToCustomerViewDto(c)
 
 		app := fiber.New()
 		app.Get("/:id", cc.FindById)
