@@ -2,12 +2,14 @@ package controllers_test
 
 import (
 	"encoding/json"
-	dto2 "github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
-	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
-	"gorm.io/gorm"
 	"io"
 	"net/http"
 	"testing"
+
+	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
+	dto2 "github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
+	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
+	"gorm.io/gorm"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang/mock/gomock"
@@ -27,6 +29,48 @@ func createCustomerController(t *testing.T) (*mocks.MockCustomer, controllers.Cu
 	r := createCustomerRepository(t)
 	c := controllers.NewCustomer(r)
 	return r, c
+}
+
+func newCustomerToTest() entities.Customer {
+	c := entities.NewCustomer()
+	c.FiscalID = "test"
+	c.CorporateName = "test"
+	c.TradeName = "test"
+	c.Address = "test"
+	c.Number = "test"
+	c.City = "test"
+	c.State = "test"
+	c.Zip = "test"
+	c.Complement = "test"
+	return c
+}
+
+func checkEnpointHandler(t *testing.T, app *fiber.App, method, url string, expectedStatusCode int, expectedBody string) error {
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := app.Test(req)
+	if err != nil {
+		return err
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+	assert.Equal(t, expectedStatusCode, res.StatusCode)
+	assert.Equal(t, expectedBody, string(body))
+	return nil
+}
+
+func toJsonString(i interface{}) string {
+	j, err := json.Marshal(i)
+	if err != nil {
+		return ""
+	}
+	return string(j)
 }
 
 func Test_CustomerFindByID(t *testing.T) {
@@ -56,8 +100,6 @@ func Test_CustomerFindByID(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			r, cc := createCustomerController(t)
-			app := fiber.New()
-			app.Get("/:id", cc.FindById)
 
 			if test.error != nil {
 				id, err := types.ParseID(test.id)
@@ -70,103 +112,52 @@ func Test_CustomerFindByID(t *testing.T) {
 					Return(nil, test.error)
 			}
 
-			req, err := http.NewRequest("GET", "/"+test.id, nil)
+			app := fiber.New()
+			app.Get("/:id", cc.FindById)
+			err := checkEnpointHandler(t, app, "GET", "/"+test.id, test.statusCode, test.body)
 			if err != nil {
 				t.Log(err)
 				return
 			}
-
-			res, err := app.Test(req)
-			if err != nil {
-				t.Log(err)
-				return
-			}
-
-			body, err := io.ReadAll(res.Body)
-			if err != nil {
-				t.Log(err)
-				return
-			}
-
-			assert.Equal(t, test.statusCode, res.StatusCode)
-			assert.Equal(t, string(body), test.body)
 		})
 	}
 
 	t.Run("Success way", func(t *testing.T) {
 		r, cc := createCustomerController(t)
-		app := fiber.New()
-		app.Get("/:id", cc.FindById)
-
-		c := entities.NewCustomer()
-		c.FiscalID = "test"
-		c.CorporateName = "test"
-		c.TradeName = "test"
-		c.Address = "test"
-		c.Number = "test"
-		c.City = "test"
-		c.State = "test"
-		c.Zip = "test"
-		c.Complement = "test"
+		c := newCustomerToTest()
 		r.EXPECT().
 			GetById(c.ID).
 			Return(&c, nil)
 
 		cDTO := dto2.EntityToCustomerViewDto(c)
 
-		req, err := http.NewRequest("GET", "/"+c.ID.String(), nil)
+		app := fiber.New()
+		app.Get("/:id", cc.FindById)
+		err := checkEnpointHandler(t, app, "GET", "/"+c.ID.String(), http.StatusOK, toJsonString(cDTO))
 		if err != nil {
 			t.Log(err)
 			return
 		}
-
-		res, err := app.Test(req)
-		if err != nil {
-			t.Log(err)
-			return
-		}
-
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			t.Log(err)
-			return
-		}
-		j, _ := json.Marshal(cDTO)
-		assert.Equal(t, http.StatusOK, res.StatusCode)
-		assert.Equal(t, string(body), string(j))
 	})
 }
 
 func Test_CustomerListAll(t *testing.T) {
 	t.Run("All Customers", func(t *testing.T) {
 		r, cc := createCustomerController(t)
-		app := fiber.New()
-		app.Get("/", cc.ListAll)
-
+		c := newCustomerToTest()
+		customers := []entities.Customer{c}
+		dtoResponse := []dto.CustomerView{dto.EntityToCustomerViewDto(c)}
 		r.
 			EXPECT().
 			All(gomock.Any(), gomock.Any()).
-			Return([]entities.Customer{}, nil)
+			Return(customers, nil)
 
-		req, err := http.NewRequest("GET", "/", nil)
+		app := fiber.New()
+		app.Get("/", cc.ListAll)
+		err := checkEnpointHandler(t, app, "GET", "/", http.StatusOK, toJsonString(dtoResponse))
 		if err != nil {
 			t.Log(err)
 			return
 		}
-
-		res, err := app.Test(req)
-		if err != nil {
-			t.Log(err)
-			return
-		}
-
-		//body, err := io.ReadAll(res.Body)
-		//if err != nil {
-		//	t.Log(err)
-		//	return
-		//}
-
-		assert.Equal(t, http.StatusOK, res.StatusCode)
-		//assert.Equal(t, string(body), test.body)
 	})
 }
