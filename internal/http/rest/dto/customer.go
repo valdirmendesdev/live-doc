@@ -1,16 +1,17 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
-	"time"
 )
 
 type CustomerView struct {
 	ID            types.ID  `json:"id"`
-	FiscalID      string    `json:"fiscalId"`
-	CorporateName string    `json:"corporateName"`
-	TradeName     string    `json:"tradeName"`
+	FiscalID      string    `json:"fiscal_id"`
+	CorporateName string    `json:"corporate_name"`
+	TradeName     string    `json:"trade_name"`
 	Address       string    `json:"address"`
 	Number        string    `json:"number"`
 	City          string    `json:"city"`
