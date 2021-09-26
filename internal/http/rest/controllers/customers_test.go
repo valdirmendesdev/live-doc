@@ -1,19 +1,15 @@
 package controllers_test
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
 	"testing"
 
+	"github.com/valdirmendesdev/live-doc/internal/http/rest"
 	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"gorm.io/gorm"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
-	"github.com/valdirmendesdev/live-doc/internal/http/rest/controllers"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/mocks"
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 )
@@ -24,52 +20,25 @@ func createCustomerRepository(t *testing.T) *mocks.MockCustomer {
 	return r
 }
 
-func createCustomerController(t *testing.T) (*mocks.MockCustomer, controllers.Customer) {
+func setupCustomerControllers(t *testing.T) (rest.App, *mocks.MockCustomer) {
 	r := createCustomerRepository(t)
-	c := controllers.NewCustomer(r)
-	return r, c
+	a := rest.NewApp()
+	a.CustomersRoutes(r)
+	return a, r
 }
 
 func newCustomerToTest() entities.Customer {
 	c := entities.NewCustomer()
-	c.FiscalID = "test"
-	c.CorporateName = "test"
-	c.TradeName = "test"
-	c.Address = "test"
-	c.Number = "test"
-	c.City = "test"
-	c.State = "test"
-	c.Zip = "test"
-	c.Complement = "test"
+	c.FiscalID = "fiscalID"
+	c.CorporateName = "corporateName"
+	c.TradeName = "tradeName"
+	c.Address = "address"
+	c.Number = "number"
+	c.City = "city"
+	c.State = "state"
+	c.Zip = "zip"
+	c.Complement = "complement"
 	return c
-}
-
-func checkEnpointHandler(t *testing.T, app *fiber.App, method, url string, expectedStatusCode int, expectedBody string) error {
-	req, err := http.NewRequest(method, url, nil)
-	if err != nil {
-		return err
-	}
-
-	res, err := app.Test(req)
-	if err != nil {
-		return err
-	}
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-	assert.Equal(t, expectedStatusCode, res.StatusCode)
-	assert.Equal(t, expectedBody, string(body))
-	return nil
-}
-
-func toJsonString(i interface{}) string {
-	j, err := json.Marshal(i)
-	if err != nil {
-		return ""
-	}
-	return string(j)
 }
 
 func Test_CustomerFindByID(t *testing.T) {
@@ -98,7 +67,7 @@ func Test_CustomerFindByID(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r, cc := createCustomerController(t)
+			app, r := setupCustomerControllers(t)
 
 			if test.error != nil {
 				id, err := types.ParseID(test.id)
@@ -111,9 +80,7 @@ func Test_CustomerFindByID(t *testing.T) {
 					Return(nil, test.error)
 			}
 
-			app := fiber.New()
-			app.Get("/:id", cc.FindById)
-			err := checkEnpointHandler(t, app, "GET", "/"+test.id, test.statusCode, test.body)
+			err := testPath(t, app.Router, http.MethodGet, "/customers/"+test.id, nil, test.statusCode, test.body)
 			if err != nil {
 				t.Log(err)
 				return
@@ -122,7 +89,7 @@ func Test_CustomerFindByID(t *testing.T) {
 	}
 
 	t.Run("Success way", func(t *testing.T) {
-		r, cc := createCustomerController(t)
+		app, r := setupCustomerControllers(t)
 		c := newCustomerToTest()
 		r.EXPECT().
 			GetById(c.ID).
@@ -130,9 +97,7 @@ func Test_CustomerFindByID(t *testing.T) {
 
 		cDTO := dto.EntityToCustomerViewDto(c)
 
-		app := fiber.New()
-		app.Get("/:id", cc.FindById)
-		err := checkEnpointHandler(t, app, "GET", "/"+c.ID.String(), http.StatusOK, toJsonString(cDTO))
+		err := testPath(t, app.Router, http.MethodGet, "/customers/"+c.ID.String(), nil, http.StatusOK, toJsonString(cDTO))
 		if err != nil {
 			t.Log(err)
 			return
@@ -142,7 +107,7 @@ func Test_CustomerFindByID(t *testing.T) {
 
 func Test_CustomerListAll(t *testing.T) {
 	t.Run("All Customers", func(t *testing.T) {
-		r, cc := createCustomerController(t)
+		app, r := setupCustomerControllers(t)
 		c := newCustomerToTest()
 		customers := []entities.Customer{c}
 		dtoResponse := []dto.CustomerView{dto.EntityToCustomerViewDto(c)}
@@ -151,12 +116,38 @@ func Test_CustomerListAll(t *testing.T) {
 			All(gomock.Any(), gomock.Any()).
 			Return(customers, nil)
 
-		app := fiber.New()
-		app.Get("/", cc.ListAll)
-		err := checkEnpointHandler(t, app, "GET", "/", http.StatusOK, toJsonString(dtoResponse))
+		err := testPath(t, app.Router, http.MethodGet, "/customers/", nil, http.StatusOK, toJsonString(dtoResponse))
 		if err != nil {
 			t.Log(err)
 			return
 		}
 	})
+}
+
+func Test_CustomerCreate(t *testing.T) {
+	app, r := setupCustomerControllers(t)
+
+	cDTO := dto.CustomerCreate{
+		FiscalID:      "fiscalID",
+		CorporateName: "corporateName",
+		TradeName:     "tradeName",
+		Address:       "address",
+		Number:        "number",
+		City:          "city",
+		State:         "state",
+		Zip:           "zip",
+		Complement:    "complement",
+	}
+
+	c := newCustomerToTest()
+
+	r.EXPECT().
+		Add(gomock.Any()).
+		Return(&c, nil)
+
+	err := testPath(t, app.Router, http.MethodPost, "/customers", cDTO, http.StatusCreated, toJsonString(dto.EntityToCustomerViewDto(c)))
+	if err != nil {
+		t.Log(err)
+		return
+	}
 }

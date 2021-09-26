@@ -1,11 +1,12 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/customer"
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
-	"net/http"
 )
 
 type Customer struct {
@@ -51,4 +52,22 @@ func (cc *Customer) ListAll(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(result)
+}
+
+func (cc *Customer) Create(c *fiber.Ctx) error {
+
+	var cDTO dto.CustomerCreate
+	err := c.BodyParser(&cDTO)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	s := customer.NewCreateService(cc.repo)
+	newCustomer, _ := s.Execute(cDTO)
+
+	return c.
+		Status(http.StatusCreated).
+		JSON(dto.EntityToCustomerViewDto(*newCustomer))
 }

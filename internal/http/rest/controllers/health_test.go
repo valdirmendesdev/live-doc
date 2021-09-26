@@ -5,22 +5,20 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
-	"github.com/valdirmendesdev/live-doc/internal/http/rest/controllers"
+	"github.com/valdirmendesdev/live-doc/internal/http/rest"
 )
 
 func Test_HealthCheck(t *testing.T) {
+	app := rest.NewApp()
+	app.HealthRoutes()
+
 	req, err := http.NewRequest("GET", "/health", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	app := fiber.New()
-	hc := controllers.NewHealth()
-	app.Get("/health", hc.Status)
-
-	res, err := app.Test(req)
+	res, err := app.Router.Test(req)
 	if err != nil {
 		t.Log(err)
 		return
