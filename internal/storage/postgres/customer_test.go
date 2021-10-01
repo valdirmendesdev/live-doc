@@ -131,7 +131,7 @@ func Test_CreateCustomer(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
 
-	_, err = repo.Add(&c)
-	// require.NotNil(t, customers)
+	customers, err := repo.Add(&c)
+	require.NotNil(t, customers)
 	require.NoError(t, err)
 }
