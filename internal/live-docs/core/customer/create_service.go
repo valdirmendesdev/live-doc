@@ -1,8 +1,6 @@
 package customer
 
 import (
-	"log"
-
 	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 )
@@ -17,7 +15,6 @@ func NewCreateService(r Repository) *CreateService {
 
 func (s *CreateService) Execute(d dto.CustomerCreate) (*entities.Customer, error) {
 	c := dto.CustomerCreateDtoToEntity(d)
-	log.Printf("%v", c)
 
 	isValid, err := c.IsValid()
 	if !isValid {
