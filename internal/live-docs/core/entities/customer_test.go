@@ -1,9 +1,10 @@
 package entities_test
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/require"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
-	"testing"
 )
 
 func Test_TableName(t *testing.T) {
@@ -16,7 +17,7 @@ func Test_NewCustomer(t *testing.T) {
 	require.NotNil(t, u)
 	require.NotNil(t, u.ID)
 	require.False(t, u.CreatedAt.IsZero())
-	require.True(t, u.UpdatedAt.IsZero())
+	require.False(t, u.UpdatedAt.IsZero())
 }
 
 func Test_CustomerIsValid(t *testing.T) {

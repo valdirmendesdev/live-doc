@@ -2,21 +2,23 @@ package entities
 
 import (
 	"errors"
-	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 	"time"
+
+	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 )
 
 type Customer struct {
 	Model
-	FiscalID      string `gorm:"column:fiscal_id"` //TODO: Change the type to CNPJ
-	CorporateName string `gorm:"column:corporate_name"`
-	TradeName     string `gorm:"column:trade_name"`
-	Address       string `gorm:"column:address"`
-	Number        string `gorm:"column:number"`
-	City          string `gorm:"column:city"`
-	State         string `gorm:"column:State"`
-	Zip           string `gorm:"column:zip"`
-	Complement    string `gorm:"column:complement"`
+	ID            types.ID `gorm:"column:id;primaryKey;type:uuid;"`
+	FiscalID      string   `gorm:"column:fiscal_id"` //TODO: Change the type to CNPJ
+	CorporateName string   `gorm:"column:corporate_name"`
+	TradeName     string   `gorm:"column:trade_name"`
+	Address       string   `gorm:"column:address"`
+	Number        string   `gorm:"column:number"`
+	City          string   `gorm:"column:city"`
+	State         string   `gorm:"column:state"`
+	Zip           string   `gorm:"column:zip"`
+	Complement    string   `gorm:"column:complement"`
 }
 
 func NewCustomer() Customer {
@@ -24,6 +26,7 @@ func NewCustomer() Customer {
 		Model: Model{
 			ID:        types.NewID(),
 			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
 		},
 	}
 }

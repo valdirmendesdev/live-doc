@@ -22,7 +22,9 @@ func NewMock(t *testing.T) (sqlmock.Sqlmock, postgres.CustomerRepository, error)
 
 	config.DB, err = gorm.Open(pg.New(pg.Config{
 		Conn: dbConn,
-	}))
+	}), &gorm.Config{
+		// SkipDefaultTransaction: true,
+	})
 
 	if err != nil {
 		return nil, postgres.CustomerRepository{}, err
@@ -72,7 +74,7 @@ func Test_FindCustomerById(t *testing.T) {
 	require.Nil(t, err)
 }
 
-func Test_GetAll(t *testing.T) {
+func Test_GetAllCustomers(t *testing.T) {
 	mock, repo, err := NewMock(t)
 	if err != nil {
 		t.Log(err)
@@ -102,10 +104,34 @@ func Test_GetAll(t *testing.T) {
 			c.Zip,
 			c.Complement,
 			c.CreatedAt,
-			c.UpdatedAt),
+			c.UpdatedAt,
+		),
 		)
 
 	customers, err := repo.All(0, 0)
 	require.NotNil(t, customers)
 	require.Nil(t, err)
+}
+
+func Test_CreateCustomer(t *testing.T) {
+	mock, repo, err := NewMock(t)
+	if err != nil {
+		t.Log(err)
+		return
+	}
+
+	query := `INSERT INTO "customers" ("id","created_at","updated_at","deleted_at","fiscal_id","corporate_name","trade_name","address","number","city","state","zip","complement") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`
+
+	c := entities.NewCustomer()
+
+	mock.ExpectBegin()
+	mock.
+		ExpectExec(regexp.QuoteMeta(query)).
+		WithArgs(c.ID, c.CreatedAt, c.UpdatedAt, c.DeletedAt, c.FiscalID, c.CorporateName, c.TradeName, c.Address, c.Number, c.City, c.State, c.Zip, c.Complement).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	_, err = repo.Add(&c)
+	// require.NotNil(t, customers)
+	require.NoError(t, err)
 }

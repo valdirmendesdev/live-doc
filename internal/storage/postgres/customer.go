@@ -14,7 +14,8 @@ func NewCustomerRepository() CustomerRepository {
 }
 
 func (r *CustomerRepository) Add(c *entities.Customer) (*entities.Customer, error) {
-	panic("implement me")
+	err := config.DB.Create(c).Error
+	return c, err
 }
 
 func (r *CustomerRepository) GetById(id types.ID) (*entities.Customer, error) {
