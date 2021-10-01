@@ -9,16 +9,15 @@ import (
 
 type Customer struct {
 	Model
-	ID            types.ID `gorm:"column:id;primaryKey;type:uuid;"`
-	FiscalID      string   `gorm:"column:fiscal_id"` //TODO: Change the type to CNPJ
-	CorporateName string   `gorm:"column:corporate_name"`
-	TradeName     string   `gorm:"column:trade_name"`
-	Address       string   `gorm:"column:address"`
-	Number        string   `gorm:"column:number"`
-	City          string   `gorm:"column:city"`
-	State         string   `gorm:"column:state"`
-	Zip           string   `gorm:"column:zip"`
-	Complement    string   `gorm:"column:complement"`
+	FiscalID      string `gorm:"column:fiscal_id"` //TODO: Change the type to CNPJ
+	CorporateName string `gorm:"column:corporate_name"`
+	TradeName     string `gorm:"column:trade_name"`
+	Address       string `gorm:"column:address"`
+	Number        string `gorm:"column:number"`
+	City          string `gorm:"column:city"`
+	State         string `gorm:"column:state"`
+	Zip           string `gorm:"column:zip"`
+	Complement    string `gorm:"column:complement"`
 }
 
 func NewCustomer() Customer {

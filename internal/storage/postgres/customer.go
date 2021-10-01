@@ -14,7 +14,7 @@ func NewCustomerRepository() CustomerRepository {
 }
 
 func (r *CustomerRepository) Add(c *entities.Customer) (*entities.Customer, error) {
-	err := config.DB.Create(c).Error
+	err := config.DB.Create(&c).Error
 	return c, err
 }
 
