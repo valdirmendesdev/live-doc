@@ -2,6 +2,8 @@ package customer_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -9,7 +11,6 @@ import (
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/mocks"
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
-	"testing"
 )
 
 func createGetByIDService(t *testing.T) (*gomock.Controller, *mocks.MockCustomer, *cs.GetByIDService) {
@@ -27,7 +28,7 @@ func Test_GetById(t *testing.T) {
 		GetById(gomock.Any()).
 		DoAndReturn(func(id types.ID) (*entities.Customer, error) {
 			if id == uuid.Nil {
-				return nil, errors.New(errorReposityText)
+				return nil, errors.New(errorRepositoryText)
 			}
 			return &entities.Customer{}, nil
 		}).
@@ -38,7 +39,7 @@ func Test_GetById(t *testing.T) {
 	require.IsType(t, c, &entities.Customer{})
 	require.Nil(t, c)
 	require.NotNil(t, err)
-	require.EqualError(t, err, errorReposityText)
+	require.EqualError(t, err, errorRepositoryText)
 
 	id = types.NewID()
 	c, err = s.Execute(id)

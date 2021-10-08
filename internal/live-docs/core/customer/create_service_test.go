@@ -2,17 +2,18 @@ package customer_test
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/valdirmendesdev/live-doc/internal/http/rest/dto"
 	cs "github.com/valdirmendesdev/live-doc/internal/live-docs/core/customer"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/mocks"
-	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
-const errorReposityText = "repository's error"
+const errorRepositoryText = "repository's error"
 
 func createService(t *testing.T) (*gomock.Controller, *mocks.MockCustomer, *cs.CreateService) {
 	c := gomock.NewController(t)
@@ -72,7 +73,7 @@ func Test_CreateRepositoryError(t *testing.T) {
 		EXPECT().
 		Add(gomock.Any()).
 		DoAndReturn(func(customer *entities.Customer) (*entities.Customer, error) {
-			return nil, errors.New(errorReposityText)
+			return nil, errors.New(errorRepositoryText)
 		}).
 		Times(1)
 
