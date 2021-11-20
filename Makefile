@@ -15,4 +15,4 @@ build-mocks:
 	$(GO) get github.com/golang/mock/gomock
 	$(GO) install github.com/golang/mock/mockgen@v1.6.0
 	@~/go/bin/mockgen -source=internal/live-docs/core/customer/repository.go -destination=internal/live-docs/core/mocks/customer.go -package=mocks -mock_names=Repository=MockCustomer
-
+	@~/go/bin/mockgen -source=internal/live-docs/core/survey/repository.go -destination=internal/live-docs/core/mocks/survey.go -package=mocks -mock_names=Repository=MockSurvey
