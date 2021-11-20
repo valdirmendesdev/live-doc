@@ -10,14 +10,14 @@ import (
 type Survey struct {
 	Model
 	Customer             *Customer
-	AnnualRevenue        float64
-	QuantityIssuedNFe    int
-	QuantityIssuedNFSe   int
-	QuantityIssuedNFCe   int
-	QuantityIssuedCTe    int
+	AnnualRevenue        float64 `gorm:"column:annual_revenue"`
+	QuantityIssuedNFe    int     `gorm:"column:quantity_issued_nfe"`
+	QuantityIssuedNFSe   int     `gorm:"column:quantity_issued_nfse"`
+	QuantityIssuedNFCe   int     `gorm:"column:quantity_issued_nfce"`
+	QuantityIssuedCTe    int     `gorm:"column:quantity_issued_cte"`
+	MainProjectLanguage  string  `gorm:"column:main_project_language"`
 	NFeStatesCovered     []string
 	NFSeCitiesCovered    []string
-	MainProjectLanguage  string
 	ExternalIntegrations []string
 	IntegrationSystems   []*IntegrationSystem
 }
@@ -35,7 +35,7 @@ func NewSurvey() Survey {
 func (s *Survey) IsValid() (bool, error) {
 
 	if s.MainProjectLanguage == "" {
-		return false, errors.New("Main project language must be filled")
+		return false, errors.New("main project language must be filled")
 	}
 	return true, nil
 }
