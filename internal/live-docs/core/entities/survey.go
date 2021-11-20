@@ -1,11 +1,13 @@
 package entities
 
 import (
-	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 	"time"
+
+	"github.com/valdirmendesdev/live-doc/internal/utils/types"
 )
 
 type Survey struct {
+	Model
 	ID                   types.ID
 	Customer             *Customer
 	AnnualRevenue        float64
@@ -20,4 +22,18 @@ type Survey struct {
 	IntegrationSystems   []*IntegrationSystem
 	CreatedAt            time.Time
 	UpdatedAt            time.Time
+}
+
+func NewSurvey() Survey {
+	return Survey{
+		Model: Model{
+			ID:        types.NewID(),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+	}
+}
+
+func (s *Survey) TableName() string {
+	return "surveys"
 }

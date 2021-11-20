@@ -7,7 +7,7 @@ import (
 	"github.com/valdirmendesdev/live-doc/internal/live-docs/core/entities"
 )
 
-func Test_TableName(t *testing.T) {
+func Test_CustomerTableName(t *testing.T) {
 	customer := entities.NewCustomer()
 	require.Equal(t, "customers", customer.TableName())
 }
