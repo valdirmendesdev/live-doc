@@ -20,8 +20,6 @@ type Survey struct {
 	MainProjectLanguage  string
 	ExternalIntegrations []string
 	IntegrationSystems   []*IntegrationSystem
-	CreatedAt            time.Time
-	UpdatedAt            time.Time
 }
 
 func NewSurvey() Survey {

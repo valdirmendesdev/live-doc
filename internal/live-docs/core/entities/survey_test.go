@@ -11,3 +11,11 @@ func Test_SurveyTableName(t *testing.T) {
 	s := entities.NewSurvey()
 	require.Equal(t, "surveys", s.TableName())
 }
+
+func Test_NewSurvey(t *testing.T) {
+	s := entities.NewSurvey()
+	require.NotNil(t, s)
+	require.NotNil(t, s.ID)
+	require.False(t, s.CreatedAt.IsZero())
+	require.False(t, s.UpdatedAt.IsZero())
+}
