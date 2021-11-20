@@ -19,3 +19,16 @@ func Test_NewSurvey(t *testing.T) {
 	require.False(t, s.CreatedAt.IsZero())
 	require.False(t, s.UpdatedAt.IsZero())
 }
+
+func Test_SurveyIsValid(t *testing.T) {
+	s := entities.NewSurvey()
+	isValid, err := s.IsValid()
+	require.False(t, isValid)
+	require.NotNil(t, err)
+
+	s.MainProjectLanguage = "en"
+	isValid, err = s.IsValid()
+	require.True(t, isValid)
+	require.Nil(t, err)
+
+}

@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"errors"
 	"time"
 
 	"github.com/valdirmendesdev/live-doc/internal/utils/types"
@@ -8,7 +9,6 @@ import (
 
 type Survey struct {
 	Model
-	ID                   types.ID
 	Customer             *Customer
 	AnnualRevenue        float64
 	QuantityIssuedNFe    int
@@ -30,6 +30,14 @@ func NewSurvey() Survey {
 			UpdatedAt: time.Now(),
 		},
 	}
+}
+
+func (s *Survey) IsValid() (bool, error) {
+
+	if s.MainProjectLanguage == "" {
+		return false, errors.New("Main project language must be filled")
+	}
+	return true, nil
 }
 
 func (s *Survey) TableName() string {
